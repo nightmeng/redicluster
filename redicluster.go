@@ -19,18 +19,20 @@ func NewRediCluster(addrs []string) *RediCluster {
 
 	pools := make(map[string]*redis.Pool)
 	for _, addr := range addrs {
-		pools[addr] = &redis.Pool{
-			MaxIdle:     512,
-			MaxActive:   1024,
-			IdleTimeout: 240 * time.Second,
-			TestOnBorrow: func(c redis.Conn, t time.Time) error {
-				_, err := c.Do("PING")
-				return err
-			},
-			Dial: func() (redis.Conn, error) {
-				return redis.DialURL(addr)
-			},
-		}
+		func(addr string) {
+			pools[addr] = &redis.Pool{
+				MaxIdle:     512,
+				MaxActive:   1024,
+				IdleTimeout: 240 * time.Second,
+				TestOnBorrow: func(c redis.Conn, t time.Time) error {
+					_, err := c.Do("PING")
+					return err
+				},
+				Dial: func() (redis.Conn, error) {
+					return redis.DialURL(addr)
+				},
+			}
+		}(addr)
 	}
 
 	return &RediCluster{
