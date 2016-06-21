@@ -1,6 +1,6 @@
 # Redis Cluster
 
-RediCluster is a redis cluster package based on redigo & consistent.
+RediCluster is a redis cluster package based on redigo.
 
 ## Installation
 
